@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.dp
 import com.newsapp.R
 
 @Composable
-fun NewsCard(title: String, dateTime: String, image: Painter ) {
+fun NewsCard(title: String, dateTime: String, image: Painter, onClick: () -> Unit  ) {
     Column(modifier = Modifier.padding(bottom = 20.dp)) {
         ElevatedCard(
-            onClick = { /*TODO*/ },
+            onClick = { onClick() },
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
 

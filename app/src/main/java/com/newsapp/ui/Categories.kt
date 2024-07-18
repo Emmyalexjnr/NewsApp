@@ -1,7 +1,6 @@
 package com.newsapp.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +17,7 @@ import com.newsapp.R
 import com.newsapp.navigation.Screens
 
 @Composable
-fun AllNews(navController: NavHostController) {
+fun Categories(navController: NavHostController) {
     fun onNewsClick(){
         navController.navigate(Screens.NewsDetailsScreen.name)
     }
@@ -27,7 +26,7 @@ fun AllNews(navController: NavHostController) {
         .fillMaxWidth()) {
 
         Column(modifier = Modifier.padding(bottom = 20.dp, top = 20.dp)) {
-            Text(text = "Top News", fontWeight = FontWeight.Bold, fontSize = MaterialTheme.typography.titleLarge.fontSize)
+            Text(text = "Health News", fontWeight = FontWeight.Bold, fontSize = MaterialTheme.typography.titleLarge.fontSize)
             HorizontalDivider(thickness = 1.dp, modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp))
         }
 

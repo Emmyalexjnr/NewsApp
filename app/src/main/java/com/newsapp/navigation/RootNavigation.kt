@@ -13,15 +13,15 @@ fun RootNavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = Graph.HOME
+        startDestination = Screens.AllNewsScreen.name
     ) {
 
-                composable(route = Graph.HOME) { entry ->
-                    AllNews(navController)
-                }
-                composable(route = "NewsDetails") {entry ->
-                    NewsDetails(navController)
-                }
+        composable(route = Screens.AllNewsScreen.name) { entry ->
+            AllNews(navController)
+        }
+        composable(route = Screens.NewsDetailsScreen.name) { entry ->
+            NewsDetails(navController)
+        }
     }
 }
 
