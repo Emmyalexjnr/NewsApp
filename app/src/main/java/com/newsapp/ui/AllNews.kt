@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.newsapp.R
+import com.newsapp.data.newsresponse.Article
 import com.newsapp.navigation.Screens
 import com.newsapp.ui.components.Loader
 import com.newsapp.viewmodels.NewsViewModel
@@ -29,14 +30,15 @@ import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AllNews(navController: NavHostController) {
-    val newsViewModel: NewsViewModel = viewModel()
+fun AllNews(navController: NavHostController, viewModel: NewsViewModel) {
 
-
-    fun onNewsClick(){
-        navController.navigate(Screens.NewsDetailsScreen.name)
+    fun onNewsClick(article: Article){
+        navController.navigate("newsDetails/${article.title}")
     }
-    if(newsViewModel.gettingAllNews) {
+    fun linkToCat(article: Article) {
+        navController.navigate("newsCategories/${article.source.name}")
+    }
+    if(viewModel.gettingAllNews) {
         Loader()
         return
     }
@@ -52,13 +54,13 @@ fun AllNews(navController: NavHostController) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            items(newsViewModel.allArticles) { article ->
+            items(viewModel.allArticles) { article ->
                 if(article.urlToImage != null) {
 
                     val date = OffsetDateTime.parse(article.publishedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
                     val formatDate = date.format(DateTimeFormatter.ofPattern("dd LLLL yyyy")).toString()
                     NewsCard(title = article.title, dateTime = formatDate, url = article.urlToImage,
-                         onClick = { onNewsClick() }, category = article.source.name)
+                         onClick = { onNewsClick(article) }, category = article.source.name, onCatPress = { linkToCat(article)} )
                 }
             }
 

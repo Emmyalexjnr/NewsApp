@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,31 +15,50 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.newsapp.R
+import com.newsapp.data.newsresponse.Article
 import com.newsapp.navigation.Screens
+import com.newsapp.viewmodels.NewsViewModel
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun Categories(navController: NavHostController) {
-    fun onNewsClick(){
-        navController.navigate(Screens.NewsDetailsScreen.name)
+fun Categories(navController: NavHostController, viewModel: NewsViewModel, sourceName: String?) {
+    val articles = sourceName?.let { viewModel.getSpecificArticleCategory(it) }
+    fun onNewsClick(article: Article){
+        navController.navigate("newsDetails/${article.title}")
+    }
+    fun linkToCat(article: Article) {
+        navController.navigate("newsCategories/${article.source.name}")
     }
     Column(modifier = Modifier
         .padding(horizontal = 16.dp)
         .fillMaxWidth()) {
 
         Column(modifier = Modifier.padding(bottom = 20.dp, top = 20.dp)) {
-            Text(text = "Health News", fontWeight = FontWeight.Bold, fontSize = MaterialTheme.typography.titleLarge.fontSize)
+            if (sourceName != null) {
+                Text(text = sourceName, fontWeight = FontWeight.Bold, fontSize = MaterialTheme.typography.titleLarge.fontSize)
+            }
             HorizontalDivider(thickness = 1.dp, modifier = Modifier.padding(0.dp, 16.dp, 0.dp, 0.dp))
         }
+
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            item {
-//                NewsCard(title = "News article", dateTime = "4 hours ago",
-//                    image = painterResource(id = R.drawable.news1), onClick = { onNewsClick() })
-//                NewsCard(title = "News article 2", dateTime = "20 hours ago",
-//                    image = painterResource(id = R.drawable.news3), onClick = { onNewsClick() })
+            if (articles != null) {
+                if(articles.isNotEmpty()) {
+                    items(articles) { article ->
+                        if(article.urlToImage != null) {
+
+                            val date = OffsetDateTime.parse(article.publishedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                            val formatDate = date.format(DateTimeFormatter.ofPattern("dd LLLL yyyy")).toString()
+                            NewsCard(title = article.title, dateTime = formatDate, url = article.urlToImage,
+                                onClick = { onNewsClick(article) }, category = article.source.name, onCatPress = { linkToCat(article)} )
+                        }
+                    }
+                }
             }
+
         }
 
     }

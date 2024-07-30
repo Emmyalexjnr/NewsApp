@@ -39,4 +39,10 @@ class NewsViewModel : ViewModel() {
             gettingAllNews = false
         })
     }
+    fun getArticleByTitle(title: String): Article? {
+        return allArticles.find { it.title == title }
+    }
+    fun getSpecificArticleCategory(sourceName: String): List<Article> {
+        return allArticles.filter { it.source.name == sourceName }
+    }
 }

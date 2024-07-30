@@ -1,16 +1,20 @@
 package com.newsapp.ui
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
@@ -23,80 +27,117 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.newsapp.R
+import com.newsapp.data.newsresponse.Article
 import com.newsapp.navigation.Screens
+import com.newsapp.ui.components.Share
+import com.newsapp.viewmodels.NewsViewModel
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun NewsDetails(navController: NavHostController) {
-    fun linkTo() {
-        navController.navigate(Screens.NewsCategoriesScreen.name)
+fun NewsDetails(navController: NavHostController, viewModel: NewsViewModel, newsId: String?) {
+
+    fun shareLink(text: String){
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            putExtra(Intent.EXTRA_TEXT, text)
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, null)
     }
-    val image = painterResource(id = R.drawable.news1)
-    val description =
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
-                "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, " +
-                "when an unknown printer took a galley of type and scrambled it to make a type specimen book. " +
-                "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop " +
-                "publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
+
+
+
+    val article = newsId?.let { viewModel.getArticleByTitle(it) }
+
+    fun linkToCat() {
+        if (article != null) {
+            navController.navigate("newsCategories/${article.source.name}")
+        }
+    }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp, 15.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .verticalScroll(rememberScrollState())
+                .weight(1f)
         ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Arrow back",
-                modifier = Modifier.size(30.dp)
-            )
-            Icon(
-                imageVector = Icons.Filled.Share,
-                contentDescription = "Share icon",
-                modifier = Modifier.size(30.dp)
-            )
-        }
-        HorizontalDivider(thickness = 1.dp)
-        Column(modifier = Modifier.padding(20.dp, 10.dp)) {
-            Text(
-                text = "What is Lorem Ipsum?",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp)
-            )
-            Text("By Time Baker, Political reporter", fontSize = 15.sp)
-            Text(text = "Sunday 07, July 2024 14:20", fontSize = 15.sp, color = Color.Gray)
-        }
+            if (article != null) {
+                val date = OffsetDateTime.parse(article.publishedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                val formatDate = date.format(DateTimeFormatter.ofPattern("EEEE dd, MMMM yyyy HH:mm", Locale.ENGLISH)).toString()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp, 15.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = "Arrow back",
+                            modifier = Modifier.size(30.dp).clickable { navController.navigateUp() }
+                        )
+                        Share(text = article.url, context = LocalContext.current)
+                    }
+                    HorizontalDivider(thickness = 1.dp)
+                    Column(modifier = Modifier.padding(20.dp, 10.dp)) {
+                        Text(
+                            text = article.title, lineHeight = 28.sp,
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp)
+                        )
+                        Text("By ${article.author}", fontSize = 15.sp)
+                        Text(text = formatDate, fontSize = 15.sp, color = Color.Gray)
+                    }
 
-        Column {
-            Image(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 10.dp, 0.dp, 0.dp)
-                    .height(280.dp),
-                painter = image,
-                contentDescription = "News one",
-                contentScale = ContentScale.FillBounds
-            )
-            Column(
-                modifier = Modifier
-                    .padding(16.dp, 12.dp, 16.dp, 0.dp)
-                    .clip(shape = RoundedCornerShape(10.dp))
-                    .background(color = Color.LightGray)
-                    .clickable { linkTo() }
-            ) {
-                Text(text = "Health", modifier = Modifier.padding(20.dp, 10.dp))
+                    Column {
+                        GlideImage(
+                            model = article.urlToImage, contentDescription = article.title,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp)
+                                .height(300.dp), contentScale = ContentScale.FillBounds
+                        )
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp, 12.dp, 16.dp, 0.dp)
+                                .clip(shape = RoundedCornerShape(10.dp))
+                                .background(color = Color.LightGray)
+                                .clickable { linkToCat() }
+                        ) {
+                            Text(text = article.source.name, modifier = Modifier.padding(20.dp, 10.dp))
+                        }
+                        Column(modifier = Modifier.padding(16.dp, 10.dp)) {
+                            Text(
+                                text = article.content.trimIndent(),
+                                maxLines = Int.MAX_VALUE, // Effectively removes line limit
+                                overflow = TextOverflow.Clip,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+
+                            )
+                        }
+
+
+                    }
+                }
             }
-            Column(modifier = Modifier.padding(16.dp, 10.dp)) {
-                Text(text = description)
-            }
-
-
         }
     }
+
+
 }

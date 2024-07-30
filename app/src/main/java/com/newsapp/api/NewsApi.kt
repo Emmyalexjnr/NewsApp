@@ -23,7 +23,7 @@ class NewsApi() {
         callback: (NewsResponse) -> Unit,
         errorCallback: (message: String?) -> Unit = {}
     ) {
-        val call: Call<NewsResponse> = RetrofitClient.newsApiService.getAllNews(apiKey = API_KEY, sortBy = "popularity", query = "technology", pageSize = 50)
+        val call: Call<NewsResponse> = RetrofitClient.newsApiService.getAllNews(apiKey = API_KEY, sortBy = "popularity", query = "technology", pageSize = 100)
         call.enqueue(object : Callback<NewsResponse> {
             override fun onResponse(call: Call<NewsResponse>, response: Response<NewsResponse>) {
                 Log.d("TAG", "======= The response from api ============")
