@@ -1,5 +1,6 @@
 package com.newsapp.ui
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -20,24 +21,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.newsapp.navigation.Screens
 import com.newsapp.ui.components.PasswordInput
 import com.newsapp.ui.components.TextInput
 import com.newsapp.viewmodels.AuthViewModel
 import com.newsapp.viewmodels.NewsViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun Login(navController: NavHostController, viewModel: NewsViewModel){
+fun Register(navController: NavHostController, viewModel: NewsViewModel){
     val authViewModel: AuthViewModel = viewModel()
-    val context = LocalContext.current
-    fun onLogin() {
-        val textSuccess = "Login is successful"
-        val duration = Toast.LENGTH_SHORT
 
+    val context = LocalContext.current
+    fun onRegister() {
+        val textSuccess = "Registration is successful"
+        val duration = Toast.LENGTH_SHORT
         val successToast = Toast.makeText(context, textSuccess, duration) // in Activity
-        authViewModel.signIn(onSuccess = {
+//        val failedToast = Toast.makeText(context, textFailed, duration) // in Activity
+        authViewModel.signUp(onSuccess = {
             successToast.show()
             navController.navigate(Screens.AllNewsScreen.route)
         }, onFailed = { it ->
@@ -63,12 +65,14 @@ fun Login(navController: NavHostController, viewModel: NewsViewModel){
                     text = "Awesome news App",
                     fontSize = 22.sp, fontWeight = FontWeight.Bold,
                 )
-                Text(text = "Welcome back!", fontSize = 26.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp))
-                Text(text = "Happy to have you back, Login to see awesome technology news", fontSize = 17.sp, modifier = Modifier.padding(0.dp, 0.dp))
+                Text(text = "Create an account", fontSize = 26.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 10.dp))
+                Text(text = "Create an account to see some awesome technology news", fontSize = 17.sp, modifier = Modifier.padding(0.dp, 0.dp))
             }
             Column(modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+
                 Column(modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp)) {
                     TextInput(value = authViewModel.email, label = "Email", onValueChange = { authViewModel.email = it })
                 }
@@ -77,21 +81,21 @@ fun Login(navController: NavHostController, viewModel: NewsViewModel){
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = { onLogin() }, modifier = Modifier.fillMaxWidth()) {
-                    Text(text = "Login")
+                Button(onClick = { onRegister() }, modifier = Modifier.fillMaxWidth(), enabled = !authViewModel.loading) {
+                    Text(text = "Register", fontSize = 17.sp)
                 }
 
                 Row(modifier = Modifier.padding(0.dp, 20.dp, 0.dp, 30.dp)) {
                     Text(
                         modifier = Modifier.padding(10.dp, 0.dp), fontWeight = FontWeight.SemiBold,
-                        text = "Don't have an account ?", fontSize = 16.sp)
+                        text = "Already have an account ?", fontSize = 16.sp)
                     ClickableText(
                         style = TextStyle(color = Color.Blue, fontSize = 18.sp),
-                        text = AnnotatedString("Create"),
+                        text = AnnotatedString("Login"),
 
                         onClick = { offset ->
                             Log.d("ClickableText", "$offset -th character is clicked.")
-                            navController.navigate(Screens.RegisterScreen.route)
+                            navController.navigate(Screens.LoginScreen.route)
                         }
                     )
                 }

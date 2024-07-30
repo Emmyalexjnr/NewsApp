@@ -15,7 +15,9 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.newsapp.ui.AllNews
 import com.newsapp.ui.Categories
+import com.newsapp.ui.Login
 import com.newsapp.ui.NewsDetails
+import com.newsapp.ui.Register
 import com.newsapp.viewmodels.NewsViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -24,8 +26,16 @@ fun RootNavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = Screens.AllNewsScreen.route
+        startDestination = Screens.LoginScreen.route
     ) {
+        composable(route = Screens.LoginScreen.route) { entry ->
+            val viewModel = entry.sharedViewModel<NewsViewModel>(navController)
+            Login(navController, viewModel)
+        }
+        composable(route = Screens.RegisterScreen.route) { entry ->
+            val viewModel = entry.sharedViewModel<NewsViewModel>(navController)
+            Register(navController, viewModel)
+        }
 
         composable(route = Screens.AllNewsScreen.route) { entry ->
             val viewModel = entry.sharedViewModel<NewsViewModel>(navController)
