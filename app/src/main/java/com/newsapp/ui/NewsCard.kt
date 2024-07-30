@@ -23,10 +23,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.newsapp.R
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun NewsCard(title: String, dateTime: String, image: Painter, onClick: () -> Unit  ) {
+fun NewsCard(title: String, dateTime: String, url: String, category: String = "news", onClick: () -> Unit  ) {
     Column(modifier = Modifier.padding(bottom = 20.dp)) {
         ElevatedCard(
             onClick = { onClick() },
@@ -34,14 +38,12 @@ fun NewsCard(title: String, dateTime: String, image: Painter, onClick: () -> Uni
             colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.white)),
 
         ) {
-            Image(
+            GlideImage(model = url, contentDescription = "House image",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(280.dp),
-                        painter = image,
-                        contentDescription = "News one",
-                        contentScale = ContentScale.FillBounds
-                    )
+                    .padding(0.dp)
+                    .height(280.dp), contentScale = ContentScale.FillBounds)
+
             Column(modifier = Modifier.padding(20.dp, 20.dp)) {
                 Row(modifier = Modifier.padding(bottom = 8.dp)) {
                     Icon(
@@ -53,7 +55,8 @@ fun NewsCard(title: String, dateTime: String, image: Painter, onClick: () -> Uni
                         color = Color.Gray
                     )
                 }
-                Text(text = title, fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                Text(text = title, lineHeight = 26.sp, fontSize = 20.sp)
+                Text(text = category, fontSize = 16.sp, color = Color.Red, modifier = Modifier.padding(0.dp, 12.dp, 0.dp, 0.dp))
 
             }
 

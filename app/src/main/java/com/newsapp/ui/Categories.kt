@@ -34,10 +34,10 @@ fun Categories(navController: NavHostController) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             item {
-                NewsCard(title = "News article", dateTime = "4 hours ago",
-                    image = painterResource(id = R.drawable.news1), onClick = { onNewsClick() })
-                NewsCard(title = "News article 2", dateTime = "20 hours ago",
-                    image = painterResource(id = R.drawable.news3), onClick = { onNewsClick() })
+//                NewsCard(title = "News article", dateTime = "4 hours ago",
+//                    image = painterResource(id = R.drawable.news1), onClick = { onNewsClick() })
+//                NewsCard(title = "News article 2", dateTime = "20 hours ago",
+//                    image = painterResource(id = R.drawable.news3), onClick = { onNewsClick() })
             }
         }
 

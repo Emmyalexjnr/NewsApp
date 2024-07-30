@@ -2,6 +2,7 @@ package com.newsapp.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,9 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.newsapp.R
+import com.newsapp.navigation.Screens
 
 @Composable
 fun NewsDetails(navController: NavHostController) {
+    fun linkTo() {
+        navController.navigate(Screens.NewsCategoriesScreen.name)
+    }
     val image = painterResource(id = R.drawable.news1)
     val description =
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
@@ -83,6 +88,7 @@ fun NewsDetails(navController: NavHostController) {
                     .padding(16.dp, 12.dp, 16.dp, 0.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = Color.LightGray)
+                    .clickable { linkTo() }
             ) {
                 Text(text = "Health", modifier = Modifier.padding(20.dp, 10.dp))
             }
